@@ -26,13 +26,13 @@ def BounderiesFrameProcess(frame):
     img_hsv=cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     # Define color limits
-    lower_green = np.array([45,100,50])
-    upper_green = np.array([75,255,255])
+    lower_g = np.array([30,100,50])
+    upper_g = np.array([80,255,255])
 
-    lower_red = np.array([0,50,50])
-    upper_red = np.array([10,255,255])
+    lower_r = np.array([0,50,50])
+    upper_r = np.array([10,255,255])
 
-    mask = cv2.inRange(img_hsv, lower_red, upper_red)
+    mask = cv2.inRange(img_hsv, lower_g, upper_g)
 
     output_img = frame.copy()
     output_img[np.where(mask==0)] = 0
@@ -43,7 +43,7 @@ def BounderiesFrameProcess(frame):
     cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
 
-    tad_frame = output_img.copy()
+    tad_frame = frame.copy()
 
     if len(cnts) < 2:
         return 0,tad_frame
@@ -51,7 +51,8 @@ def BounderiesFrameProcess(frame):
     num = 0
     for cc in cnts:
         ((x, y), radius) = cv2.minEnclosingCircle(cc)
-        if radius > 8:
+        if radius > 5:
+            cv2.circle(tad_frame, (int(x), int(y)), int(radius), (0, 255, 255), 2)
             num = num+1
 
     if num < 2:
@@ -59,7 +60,7 @@ def BounderiesFrameProcess(frame):
 
     for cc in cnts:
         ((x, y), radius) = cv2.minEnclosingCircle(cc)
-        if radius > 8:
+        if radius > 5:
             print(xlb,xrb,x,yub,ybb,y,radius)
             xlb = min(x,xlb)
             xrb = max(x,xrb)
@@ -158,7 +159,7 @@ def FrameProcess(frame, websocket):
 
 def VideoProcess(websocket):
     ret = 0
-    while ret == 0: 
+    while ret != 0: 
         ret, frame = cap.read()
         ret,frame = BounderiesFrameProcess(frame)
         cv2.imshow('window', frame)
@@ -184,7 +185,7 @@ start_server = websockets.serve(hello, 'localhost', 9999)
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
 
-# VideoProcess(0)
+#VideoProcess(0)
 
 # When everything done, release the capture
 cap.release()
