@@ -62,8 +62,8 @@ class App extends Component {
       return;
     }
 
-    if (this.current.state.visiableDot == true) {
-      this.current.setState({visiableDot: false})
+    if (this.state.visiableDot == true) {
+      this.setState({visiableDot: false})
       return
     }
 	
