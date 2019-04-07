@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import logo from './bullseye.png'
+import ready from './ready-player-one-logo-png-2.png'
+import explosion from './giphy.gif'
 import './App.css';
 
 
@@ -10,8 +12,9 @@ class App extends Component {
     this.imageRef = React.createRef();
     this.frameRef = React.createRef();
     this.x=this.y=1
-    this.state = { visiableDot: true}
-  }
+    this.state = { visiableDot: true, redScreen: 0, fight: 0}
+  } 
+  
 
   newSocket = () => {
     var self = this
@@ -64,11 +67,23 @@ class App extends Component {
     	offsetTop *= frameH
     	offsetLeft *= frameW
 	if (this.lastY && Math.abs(this.lastY - offsetTop) > 0.45) {
-		console.log('DONE')
+    console.log('DONE')
+    var self=this
+    this.setState({redScreen: 1});
+    setTimeout(() => {
+      self.setState({redScreen: 0});
+    }, 250);
 		this.lastY = null
 		this.done = true
-		var self=this
-		setTimeout(function () { self.done=false; console.log('READY AGAIN');}, 3000)
+    setTimeout(() => {
+
+      self.setState({fight: 1})
+      setTimeout(function () {
+        self.setState({fight: 0})
+
+        self.done=false; console.log('READY AGAIN');
+      }, 1000)
+    }, 3000);
 	}
     }
     else {
@@ -79,6 +94,13 @@ class App extends Component {
 	this.lastY = offsetTop 
 //    offsetLeft-=20
     this.setState({visiableDot: false})
+    img.src = explosion;
+    img.width = '500px';
+    setTimeout(() => { 
+      img.width = '100%';
+      img.src = logo;
+      img.opacity = 0;
+    }, 1000);
     img.style.position = 'absolute';
     img.style.top = offsetTop + 'px';
     img.style.left = offsetLeft + 'px';
@@ -91,6 +113,13 @@ class App extends Component {
       
       
       <div ref={this.frameRef} className="corners" height="100%" width="100%">
+     <div class="fight-container">
+      <div class="fight" style={{opacity: this.state.fight}}> </div>
+     </div>
+
+      {/* <img src={ready} width="500" style={{position: 'absolute', top:0, bottom:0 ,left:0, right:0}} /> */}
+      <div class="red-screen" style={{opacity: this.state.redScreen}}></div>
+
       {
          this.state.visiableDot ? <div class="circle_top_left"></div>:<div></div>
         

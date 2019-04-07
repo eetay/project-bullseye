@@ -9,6 +9,45 @@
   pointer-events: none;
 }
 
+.fight-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.fight {
+  
+  transition: 1s all;
+
+  top:0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  
+  background-image: url('./ready-player-one-logo-png-2.png');
+  width: 32rem;
+  height: 11rem;
+  background-repeat: no-repeat;
+
+}
+
+.red-screen{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background-color: red;
+  right: 0;
+  left: 0;
+  opacity: 1;
+  transition: 1s all;
+}
+
+.red-screen.opacity{
+  opacity: 0;
+}
+
 .corners {
   position: absolute;
   width: 100%; /* for demo purposes */
