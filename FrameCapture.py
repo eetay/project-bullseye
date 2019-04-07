@@ -32,7 +32,7 @@ def BounderiesFrameProcess(frame):
     lower_r = np.array([0,50,50])
     upper_r = np.array([10,255,255])
 
-    mask = cv2.inRange(img_hsv, lower_g, upper_g)
+    mask = cv2.inRange(img_hsv, lower_r, upper_r)
 
     output_img = frame.copy()
     output_img[np.where(mask==0)] = 0
@@ -43,7 +43,7 @@ def BounderiesFrameProcess(frame):
     cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
 
-    tad_frame = frame.copy()
+    tad_frame = output_img.copy()
 
     if len(cnts) < 2:
         return 0,tad_frame
@@ -71,6 +71,9 @@ def BounderiesFrameProcess(frame):
 
     tot_width = xrb-xlb
     tot_height = ybb-yub
+
+    greeting = json.dumps({'offsetTop':tot_height, 'offsetLeft':tot_width})
+    websocket.send(greeting)
 
     # Display the resulting frame
     return xrb,tad_frame
@@ -108,7 +111,7 @@ def FrameProcess(frame, websocket):
     cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
 
-    tad_frame = output_img
+    tad_frame = frame.copy()
 
     if len(cnts) <= 0:
         return 0,tad_frame
@@ -159,7 +162,7 @@ def FrameProcess(frame, websocket):
 
 def VideoProcess(websocket):
     ret = 0
-    while ret != 0: 
+    while ret == 0: 
         ret, frame = cap.read()
         ret,frame = BounderiesFrameProcess(frame)
         cv2.imshow('window', frame)
