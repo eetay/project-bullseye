@@ -11,9 +11,10 @@ class App extends Component {
     this.x=this.y=1
   }
 
-  componentDidMount(_props) {
+  newSocket = () => {
     var self = this
-    self.exampleSocket = new WebSocket("ws://localhost:9999");
+    self.exampleSocket = new WebSocket("ws://localhost:9999")
+    console.log('new socket')
     self.exampleSocket.onmessage = function (event) {
       console.log('got event', event.data);
       let {offsetTop, offsetLeft} = JSON.parse(event.data)
@@ -23,12 +24,23 @@ class App extends Component {
         offsetLeft
       })
     }
+    self.exampleSocket.onclose = function (event) {
+      console.log('disconnected', event);
+      self.connected = false 
+      setTimeout(function() { self.newSocket() }, 2000)
+    }
     self.exampleSocket.onopen = function (event) {
       console.log('connected', event);
       if (event.type === 'open') {
-        self.exampleSocket.connected = true 
+        self.connected = true 
       }
     };
+
+  }
+
+  componentDidMount(_props) {
+    var self = this
+    self.exampleSocket = self.newSocket()
     /*
     let a = setInterval(function () {
       let offsetTop = self.y++;
@@ -46,7 +58,7 @@ class App extends Component {
     img.style.top = offsetTop + 'px';
     img.style.left = offsetLeft + 'px';
     img.style.display = "block";
-    if (this.exampleSocket.connected) this.exampleSocket.send(JSON.stringify({offsetTop, offsetLeft}));
+    if (this.exampleSocket && this.connected) this.exampleSocket.send(JSON.stringify({offsetTop, offsetLeft}));
   }
 
   render() {

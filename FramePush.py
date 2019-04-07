@@ -17,7 +17,7 @@ async def hello(websocket, path):
         greeting = json.dumps({'offsetTop':y,'offsetLeft':x})
         print(f"> {greeting}")
         await websocket.send(greeting)
-        time.sleep(1)
+        time.sleep(0.1)
     # name = await websocket.recv()
     # print(f"< {name}")
 
