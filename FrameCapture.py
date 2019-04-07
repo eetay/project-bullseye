@@ -26,13 +26,13 @@ def BounderiesFrameProcess(frame):
     img_hsv=cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     # Define color limits
-    lower_g = np.array([30,100,50])
-    upper_g = np.array([80,255,255])
+    lower_g = np.array([45,60,130])
+    upper_g = np.array([64,140,200])
 
     lower_r = np.array([0,50,50])
     upper_r = np.array([10,255,255])
 
-    mask = cv2.inRange(img_hsv, lower_r, upper_r)
+    mask = cv2.inRange(img_hsv, lower_g, upper_g)
 
     output_img = frame.copy()
     output_img[np.where(mask==0)] = 0
@@ -69,16 +69,12 @@ def BounderiesFrameProcess(frame):
 
     print(xlb,xrb,yub,ybb)
 
-    tot_width = xrb-xlb
-    tot_height = ybb-yub
-
-    greeting = json.dumps({'offsetTop':tot_height, 'offsetLeft':tot_width})
-    websocket.send(greeting)
+    
 
     # Display the resulting frame
     return xrb,tad_frame
 
-def FrameProcess(frame, websocket):
+def FrameProcess(frame):
     global xlb
     global xrb
     global yub
@@ -90,16 +86,12 @@ def FrameProcess(frame, websocket):
     img_hsv=cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     # Define color limits
-    lower_red = np.array([5,50,50])
-    upper_red = np.array([15,255,255])
-    mask0 = cv2.inRange(img_hsv, lower_red, upper_red)
-
-    lower_red = np.array([170,50,50])
-    upper_red = np.array([180,255,255])
-    mask1 = cv2.inRange(img_hsv, lower_red, upper_red)
+    lower_r = np.array([0,50,50])
+    upper_r = np.array([10,255,255])
+    mask0 = cv2.inRange(img_hsv, lower_r, upper_r)
 
     # join the masks
-    mask = mask0+mask1
+    mask = mask0
 
     # convert image to black/white
     output_img = frame.copy()
@@ -114,7 +106,7 @@ def FrameProcess(frame, websocket):
     tad_frame = frame.copy()
 
     if len(cnts) <= 0:
-        return 0,tad_frame
+        return 0,0,tad_frame
 
     c = max(cnts, key=cv2.contourArea)
     found = False
@@ -133,13 +125,13 @@ def FrameProcess(frame, websocket):
         c = cc
 
     if not found:
-        return 0,tad_frame
+        return 0,0,tad_frame
 
     ((x, y), radius) = cv2.minEnclosingCircle(c)
     M = cv2.moments(c)
     
     if not M["m00"]:
-        return 0,tad_frame
+        return 0,0,tad_frame
 
     cX = int(M["m10"] / M["m00"])
     cY = int(M["m01"] / M["m00"])
@@ -148,20 +140,19 @@ def FrameProcess(frame, websocket):
     refX = (x-xlb)/tot_width;
     refY = (y-yub)/tot_height;
 
-    greeting = json.dumps({'offsetTop':refY, 'offsetLeft':refX})
-    websocket.send(greeting)
-
-    tad_frame =  output_img.copy() #frame.copy()
+    tad_frame =  frame.copy() #frame.copy()
 
     cv2.circle(tad_frame, (int(x), int(y)), int(radius), (0, 255, 255), 2)
     cv2.circle(tad_frame, center, 5, (0, 0, 255), -1)
 
     # Display the resulting frame
-    return 1,tad_frame
+    return refX,refY,tad_frame
 
-
-def VideoProcess(websocket):
+def PreProcess():
     ret = 0
+    global xrb, xlb, yub, ybb
+    global tot_width, tot_height
+    print("TAD start")
     while ret == 0: 
         ret, frame = cap.read()
         ret,frame = BounderiesFrameProcess(frame)
@@ -169,16 +160,26 @@ def VideoProcess(websocket):
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
+    tot_width = xrb-xlb
+    tot_height = ybb-yub
+    
+
+async def hello(websocket, path):
+    global tot_width, tot_height
+    print("Connected!!")
+    PreProcess()
+    print("TADDDDD send ",tot_width,tot_height)
+    greeting = json.dumps({'offsetTop':tot_height, 'offsetLeft':tot_width})
+    await websocket.send(greeting)
     while True:
         ret, frame = cap.read()
-        ret,frame = FrameProcess(frame, websocket)
+        x,y,frame = FrameProcess(frame)
+        if x !=0: 
+            greeting = json.dumps({'offsetTop':y, 'offsetLeft':x})
+            await websocket.send(greeting)
         cv2.imshow('window', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-
-async def hello(websocket, path):
-    print("Connected!!")
-    VideoProcess(websocket)
     
 cv2.namedWindow("window", cv2.WND_PROP_FULLSCREEN)
 cv2.setWindowProperty("window",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)

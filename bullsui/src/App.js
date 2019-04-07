@@ -59,14 +59,17 @@ class App extends Component {
 
     var frameW = this.frameRef.current.clientWidth - img.clientWidth
     var frameH = this.frameRef.current.clientHeight - img.clientHeight
-
-    //debugger
+    if (offsetTop <= 1) {
+    	offsetTop *= frameH
+    	offsetLeft *= frameW
+    }
+    else {
     offsetTop %= frameH
     offsetLeft %= frameW
 
+    }
+ 
     this.setState({visiableDot: false})
-    
-debugger
     img.style.position = 'absolute';
     img.style.top = offsetTop + 'px';
     img.style.left = offsetLeft + 'px';
