@@ -2,7 +2,9 @@ import numpy as np
 import cv2
 import imutils
 
-cap = cv2.VideoCapture(1)
+
+
+cap = cv2.VideoCapture(0)
 
 while(True):
     # Capture frame-by-frame
@@ -21,7 +23,6 @@ while(True):
 
     # join my masks
     mask = mask0+mask1
- #   mask=mask0
 
     # set my output img to zero everywhere except my mask
     output_img = frame.copy()
@@ -36,8 +37,6 @@ while(True):
     if len(cnts) <= 0:
         continue
 
-    center = None
-
     c = max(cnts, key=cv2.contourArea)
 
     ((x, y), radius) = cv2.minEnclosingCircle(c)
@@ -50,15 +49,14 @@ while(True):
     cY = int(M["m01"] / M["m00"])
     center = (cX, cY)
 
-    cv2.circle(output_img, (int(x), int(y)), int(radius), (0, 255, 255), 2)
-    cv2.circle(output_img, center, 5, (0, 0, 255), -1)
-
+    cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 255), 2)
+    cv2.circle(frame, center, 5, (0, 0, 255), -1)
 
     # Our operations on the frame come here
-    
-
+    cv2.namedWindow("window", cv2.WND_PROP_FULLSCREEN)
+    cv2.setWindowProperty("window",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
     # Display the resulting frame
-    cv2.imshow('frame', output_img)
+    cv2.imshow('window', frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
