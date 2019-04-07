@@ -98,7 +98,7 @@ def FrameProcess(frame):
     cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
 
-    tad_frame = frame.copy()
+    tad_frame = frame
 
     if len(cnts) <= 0:
         return 0,0,tad_frame

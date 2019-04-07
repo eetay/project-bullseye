@@ -63,7 +63,7 @@ class App extends Component {
     if (offsetTop <= 1) {
     	offsetTop *= frameH
     	offsetLeft *= frameW
-	if (this.lastY && Math.abs(this.lastY - offsetTop) > 0.35) {
+	if (this.lastY && Math.abs(this.lastY - offsetTop) > 0.45) {
 		console.log('DONE')
 		this.lastY = null
 		this.done = true
@@ -77,7 +77,7 @@ class App extends Component {
 
     }
 	this.lastY = offsetTop 
-    offsetLeft-=20
+//    offsetLeft-=20
     this.setState({visiableDot: false})
     img.style.position = 'absolute';
     img.style.top = offsetTop + 'px';
