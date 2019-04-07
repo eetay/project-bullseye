@@ -4,7 +4,7 @@ import imutils
 
 
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 while(True):
     # Capture frame-by-frame
@@ -15,11 +15,9 @@ while(True):
     upper_red = np.array([15,255,255])
     mask0 = cv2.inRange(img_hsv, lower_red, upper_red)
 
-
     lower_red = np.array([170,50,50])
     upper_red = np.array([180,255,255])
     mask1 = cv2.inRange(img_hsv, lower_red, upper_red)
-
 
     # join my masks
     mask = mask0+mask1
