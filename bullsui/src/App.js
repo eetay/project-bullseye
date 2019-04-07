@@ -57,7 +57,16 @@ class App extends Component {
   }
 
   moveTarget = ({image, offsetTop, offsetLeft}) => {
-	if (this.done) return;
+    
+    if (this.done) {
+      return;
+    }
+
+    if (this.current.state.visiableDot == true) {
+      this.current.setState({visiableDot: false})
+      return
+    }
+	
     let img = image
     console.log('moveTarget')
 
@@ -92,20 +101,14 @@ class App extends Component {
 
     }
 	this.lastY = offsetTop 
-//    offsetLeft-=20
-    this.setState({visiableDot: false})
-    img.src = explosion;
-    img.width = '500px';
-    setTimeout(() => { 
-      img.width = '100%';
-      img.src = logo;
-      img.opacity = 0;
-    }, 1000);
-    img.style.position = 'absolute';
-    img.style.top = offsetTop + 'px';
-    img.style.left = offsetLeft + 'px';
-    img.style.display = "block";
-    if (this.exampleSocket && this.connected) this.exampleSocket.send(JSON.stringify({offsetTop, offsetLeft}));
+
+  img.width = '100%';
+  img.opacity = 0;
+  img.style.position = 'absolute';
+  img.style.top = offsetTop + 'px';
+  img.style.left = offsetLeft + 'px';
+  img.style.display = "block";
+  if (this.exampleSocket && this.connected) this.exampleSocket.send(JSON.stringify({offsetTop, offsetLeft}));
   }
 
   render() {
