@@ -3,9 +3,19 @@
 }
 
 .App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
+
+  height: 200px;
+  width: 200px;
   pointer-events: none;
+}
+
+.corners {
+  position: absolute;
+  width: 100%; /* for demo purposes */
+  height: 100%;
+  padding: 0;
+  margin: 0;
+ 
 }
 
 .App-header {
@@ -18,6 +28,24 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+
+.circle_top_left:before {
+  content: ' \25CF';
+  font-size: 200px;
+  color: #00FF00;
+  left: 0;
+  top: 0;
+  position: absolute;
+}
+.circle_bottom_right:before {
+  content: ' \25CF';
+  font-size: 200px;
+  color: #00FF00;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+}
+
 
 .App-link {
   color: #61dafb;

@@ -8,6 +8,7 @@ class App extends Component {
   constructor (props) {
     super()
     this.imageRef = React.createRef();
+    this.frameRef = React.createRef();
     this.x=this.y=1
   }
 
@@ -54,6 +55,14 @@ class App extends Component {
   moveTarget = ({image, offsetTop, offsetLeft}) => {
     let img = image
     console.log('moveTarget')
+
+    var frameW = this.frameRef.current.clientWidth - img.clientWidth
+    var frameH = this.frameRef.current.clientHeight - img.clientHeight
+
+    //debugger
+    offsetTop %= frameH
+    offsetLeft %= frameW
+debugger
     img.style.position = 'absolute';
     img.style.top = offsetTop + 'px';
     img.style.left = offsetLeft + 'px';
@@ -63,11 +72,23 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <header className="App-header" height="100%" width="100%">
-          <img ref={this.imageRef} src={logo} className="App-logo" alt="logo"/> 
-        </header>
-      </div>
+      
+      
+      <div ref={this.frameRef} className="corners" height="100%" width="100%">
+      <div class="circle_top_left"></div>
+      <div class="circle_bottom_right"></div>
+      { /* 
+        <div class="top left"></div>
+        <div class="top right"></div>
+        <div class="bottom right"></div>
+        <div class="bottom left"></div>
+      */ }
+       <img ref={this.imageRef} src={logo} className="App-logo" alt="logo"/>
+
+ 
+         
+        </div>
+      
     );
   }
 }
