@@ -10,6 +10,7 @@ class App extends Component {
     this.imageRef = React.createRef();
     this.frameRef = React.createRef();
     this.x=this.y=1
+    this.state = { visiableDot: true}
   }
 
   newSocket = () => {
@@ -62,6 +63,9 @@ class App extends Component {
     //debugger
     offsetTop %= frameH
     offsetLeft %= frameW
+
+    this.setState({visiableDot: false})
+    
 debugger
     img.style.position = 'absolute';
     img.style.top = offsetTop + 'px';
@@ -75,8 +79,14 @@ debugger
       
       
       <div ref={this.frameRef} className="corners" height="100%" width="100%">
-      <div class="circle_top_left"></div>
-      <div class="circle_bottom_right"></div>
+      {
+         this.state.visiableDot ? <div class="circle_top_left"></div>:<div></div>
+        
+      }
+      {
+         this.state.visiableDot ? <div class="circle_bottom_right"></div>:<div></div>
+      }
+      
       { /* 
         <div class="top left"></div>
         <div class="top right"></div>
