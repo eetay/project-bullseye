@@ -54,6 +54,7 @@ class App extends Component {
   }
 
   moveTarget = ({image, offsetTop, offsetLeft}) => {
+	if (this.done) return;
     let img = image
     console.log('moveTarget')
 
@@ -62,13 +63,21 @@ class App extends Component {
     if (offsetTop <= 1) {
     	offsetTop *= frameH
     	offsetLeft *= frameW
+	if (this.lastY && Math.abs(this.lastY - offsetTop) > 0.35) {
+		console.log('DONE')
+		this.lastY = null
+		this.done = true
+		var self=this
+		setTimeout(function () { self.done=false; console.log('READY AGAIN');}, 3000)
+	}
     }
     else {
-    offsetTop %= frameH
-    offsetLeft %= frameW
+    	offsetTop %= frameH
+    	offsetLeft %= frameW
 
     }
- 
+	this.lastY = offsetTop 
+    offsetLeft-=20
     this.setState({visiableDot: false})
     img.style.position = 'absolute';
     img.style.top = offsetTop + 'px';

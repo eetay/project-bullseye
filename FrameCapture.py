@@ -69,8 +69,6 @@ def BounderiesFrameProcess(frame):
 
     print(xlb,xrb,yub,ybb)
 
-    
-
     # Display the resulting frame
     return xrb,tad_frame
 
@@ -88,10 +86,7 @@ def FrameProcess(frame):
     # Define color limits
     lower_r = np.array([0,50,50])
     upper_r = np.array([10,255,255])
-    mask0 = cv2.inRange(img_hsv, lower_r, upper_r)
-
-    # join the masks
-    mask = mask0
+    mask = cv2.inRange(img_hsv, lower_r, upper_r)
 
     # convert image to black/white
     output_img = frame.copy()
@@ -168,7 +163,6 @@ async def hello(websocket, path):
     global tot_width, tot_height
     print("Connected!!")
     PreProcess()
-    print("TADDDDD send ",tot_width,tot_height)
     greeting = json.dumps({'offsetTop':tot_height, 'offsetLeft':tot_width})
     await websocket.send(greeting)
     while True:
